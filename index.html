@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Kalamat</title>
-<link rel="manifest" href="manifest.json?v=5">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
+<link rel="manifest" href="manifest.json?v=6">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=6">
 <style>
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;background:#EFFBFC}
@@ -42,7 +42,7 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
 .actions button{border:0;border-radius:12px;width:43px;height:40px;display:flex;align-items:center;justify-content:center;font-size:17px}
 .play{background:#39B8C8;color:#fff} .play.playing{background:#2e755c}
 .fav,.copy{background:#E5F8FA;color:#557075} .fav.on{background:#fff0f5;color:#b4426d}
-.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,760px);z-index:30;background:#fff;border-top:1px solid #CFECEF;padding:7px 10px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,760px);z-index:30;background:#fff;border-top:1px solid #CFECEF;padding:7px 10px calc(7px + env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 .bottom button{min-height:48px;border:0;border-radius:13px;background:transparent;color:#607A7F;font-size:12px;font-weight:700} .bottom button.on{background:#E5F8FA;color:#2A9EAE}
 .state{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(180deg,#EFFBFC,#fff)}
 .box{width:min(100%,430px);background:#fff;border:1px solid #CFECEF;border-radius:24px;padding:22px;box-shadow:0 18px 55px rgba(32,80,86,.11);text-align:center}
@@ -58,6 +58,11 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
 .empty{background:#fff;border:1px dashed #CFECEF;border-radius:16px;padding:28px 18px;text-align:center;color:#607B80}
 .toast{position:fixed;z-index:80;left:50%;bottom:88px;transform:translateX(-50%);background:#20383c;color:#fff;border-radius:12px;padding:9px 13px;font-size:12px;display:none;max-width:calc(100% - 28px);text-align:center}
 .toast.show{display:block}
+.colloc-card .phrase-main{font-weight:900;font-size:17px;color:#173653;text-align:left;direction:ltr;line-height:1.5}
+.colloc-card .meaning{margin-top:5px;text-align:right;direction:rtl;color:#355A60;font-size:14px;font-weight:700}
+.colloc-card .example{margin-top:9px;padding-top:9px;border-top:1px dashed #CFECEF;text-align:left;direction:ltr;color:#294f56;font-size:13px;line-height:1.65}
+.colloc-card .example-fa{margin-top:4px;text-align:right;direction:rtl;color:#607B80;font-size:12px;line-height:1.7}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;direction:ltr}.badge{background:#E5F8FA;color:#2A9EAE;border-radius:999px;padding:4px 7px;font-size:10px;font-weight:800}
 @media(min-width:640px){.cards{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -73,7 +78,7 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
 
 <section id="loginState" class="state hidden">
   <div class="box">
-    <div class="biglogo"><img src="icon-512.png?v=5" alt=""></div>
+    <div class="biglogo"><img src="icon-512.png?v=6" alt=""></div>
     <h1>ورود به Kalamat</h1>
     <p>برای مشاهده Daily Conversations با حساب فعال خود وارد شوید.</p>
     <form id="loginForm">
@@ -87,7 +92,7 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
 
 <section id="lockedState" class="state hidden">
   <div class="box">
-    <div class="biglogo"><img src="icon-512.png?v=5" alt=""></div>
+    <div class="biglogo"><img src="icon-512.png?v=6" alt=""></div>
     <div class="lockicon">🔒</div>
     <h1>دسترسی شما فعال نیست</h1>
     <p>این حساب وجود دارد، اما دسترسی Daily Conversations برای آن هنوز فعال نشده است.</p>
@@ -98,7 +103,7 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
 <div id="appState" class="shell hidden">
   <header class="top">
     <div class="brandrow">
-      <div class="logo"><img src="icon-192.png?v=5" alt=""></div>
+      <div class="logo"><img src="icon-192.png?v=6" alt=""></div>
       <div class="brand"><h1>مکالمات روزمره</h1><p>Daily Conversations</p></div>
       <button id="logout" class="authmini">خروج</button>
     </div>
@@ -114,7 +119,8 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
     <div id="empty" class="empty hidden">جمله‌ای پیدا نشد.</div>
   </main>
   <nav class="bottom">
-    <button id="allTab" class="on">همه جمله‌ها</button>
+    <button id="dailyTab" class="on">Daily</button>
+    <button id="collocTab">Collocations</button>
     <button id="favTab">علاقه‌مندی‌ها</button>
   </nav>
 </div>
@@ -141,11 +147,15 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
   const count = document.getElementById('count');
   const title = document.getElementById('title');
   const empty = document.getElementById('empty');
-  const allTab = document.getElementById('allTab');
+  const dailyTab = document.getElementById('dailyTab');
+  const collocTab = document.getElementById('collocTab');
   const favTab = document.getElementById('favTab');
 
   let categories = [];
   let sentences = [];
+  let collocCategories = [];
+  let collocations = [];
+  let module = 'daily';
   let cat = 'all';
   let mode = 'all';
   let currentUtterance = null;
@@ -182,17 +192,21 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
     const active = access && access.active === true && (!access.expires_at || new Date(access.expires_at) > new Date());
     if (!active) { showOnly(lockedState); return; }
 
-    const [catRes, sentRes] = await Promise.all([
+    const [catRes, sentRes, ccatRes, collRes] = await Promise.all([
       db.from('categories').select('id,slug,title_fa,title_en,sort_order').order('sort_order'),
-      db.from('sentences').select('id,category_id,english,persian,sort_order').order('category_id').order('sort_order')
+      db.from('sentences').select('id,category_id,english,persian,sort_order').order('category_id').order('sort_order'),
+      db.from('collocation_categories').select('id,slug,title_fa,title_en,sort_order').order('sort_order'),
+      db.from('collocations').select('id,category_id,phrase,meaning_fa,example_en,example_fa,level,pattern,sort_order').order('category_id').order('sort_order')
     ]);
-    if (catRes.error || sentRes.error) {
-      console.error(catRes.error || sentRes.error);
+    if (catRes.error || sentRes.error || ccatRes.error || collRes.error) {
+      console.error(catRes.error || sentRes.error || ccatRes.error || collRes.error);
       lockedState.querySelector('p').textContent='خطایی در دریافت محتوا رخ داد. لطفاً دوباره تلاش کنید.';
       showOnly(lockedState); return;
     }
     categories = catRes.data || [];
     sentences = sentRes.data || [];
+    collocCategories = ccatRes.data || [];
+    collocations = collRes.data || [];
     buildCats();
     render();
     showOnly(appState);
@@ -218,7 +232,7 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
     try { speechSynthesis.cancel(); } catch(e) {}
     await db.auth.signOut();
     search.value='';
-    categories=[]; sentences=[];
+    categories=[]; sentences=[]; collocCategories=[]; collocations=[];
     showOnly(loginState);
   }
   document.getElementById('logout').addEventListener('click', logout);
@@ -229,7 +243,8 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
     const all=document.createElement('button');
     all.className='chip on'; all.dataset.cat='all'; all.textContent='همه';
     cats.appendChild(all);
-    categories.forEach(c=>{
+    const source = module==='daily' ? categories : collocCategories;
+    source.forEach(c=>{
       const b=document.createElement('button');
       b.className='chip'; b.dataset.cat=String(c.id); b.textContent=c.title_fa || c.title_en || 'دسته';
       cats.appendChild(b);
@@ -239,50 +254,78 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
     const b=e.target.closest('.chip'); if(!b)return;
     mode='all'; cat=b.dataset.cat;
     [...cats.querySelectorAll('.chip')].forEach(x=>x.classList.remove('on')); b.classList.add('on');
-    allTab.classList.add('on'); favTab.classList.remove('on'); render();
+    favTab.classList.remove('on'); render();
   });
-  allTab.addEventListener('click',()=>{mode='all';allTab.classList.add('on');favTab.classList.remove('on');render();});
-  favTab.addEventListener('click',()=>{mode='fav';favTab.classList.add('on');allTab.classList.remove('on');render();});
+  dailyTab.addEventListener('click',()=>{module='daily';mode='all';cat='all';search.value='';dailyTab.classList.add('on');collocTab.classList.remove('on');favTab.classList.remove('on');buildCats();render();});
+  collocTab.addEventListener('click',()=>{module='colloc';mode='all';cat='all';search.value='';collocTab.classList.add('on');dailyTab.classList.remove('on');favTab.classList.remove('on');buildCats();render();});
+  favTab.addEventListener('click',()=>{mode='fav';favTab.classList.add('on');dailyTab.classList.remove('on');collocTab.classList.remove('on');render();});
   search.addEventListener('input',render);
   clear.addEventListener('click',()=>{search.value='';render();search.focus();});
 
   function render() {
     const q=norm(search.value);
     clear.classList.toggle('show', !!search.value);
-    let list=sentences.filter(s=>{
-      if(mode==='fav' && !favs[s.id]) return false;
-      if(mode==='all' && cat!=='all' && String(s.category_id)!==String(cat)) return false;
-      if(q && !norm(s.english+' '+s.persian).includes(q)) return false;
-      return true;
-    });
     cards.innerHTML='';
-    list.forEach(s=>{
-      const a=document.createElement('article'); a.className='card';
-      const p=document.createElement('div'); p.className='phrase';
-      const en=document.createElement('div'); en.className='en'; en.textContent=s.english;
-      const fa=document.createElement('div'); fa.className='fa'; fa.textContent=s.persian;
-      p.append(en,fa);
-      const acts=document.createElement('div'); acts.className='actions';
-      const play=document.createElement('button'); play.className='play'; play.textContent='▶'; play.setAttribute('aria-label','پخش');
-      play.addEventListener('click',()=>speak(s.english,play));
-      const fav=document.createElement('button'); fav.className='fav'+(favs[s.id]?' on':''); fav.textContent=favs[s.id]?'♥':'♡';
-      fav.addEventListener('click',()=>{
-        if(favs[s.id]) delete favs[s.id]; else favs[s.id]=1;
-        localStorage.setItem('kalamat.favs',JSON.stringify(favs)); render();
+    let list=[];
+    if(module==='daily'){
+      list=sentences.filter(s=>{
+        if(mode==='fav' && !favs['d-'+s.id]) return false;
+        if(mode==='all' && cat!=='all' && String(s.category_id)!==String(cat)) return false;
+        if(q && !norm(s.english+' '+s.persian).includes(q)) return false;
+        return true;
       });
-      const cp=document.createElement('button'); cp.className='copy'; cp.textContent='⧉';
-      cp.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(s.english+'\n'+s.persian);toast('کپی شد');}catch(e){toast('کپی انجام نشد');}});
-      acts.append(play,fav,cp); a.append(p,acts); cards.appendChild(a);
-    });
-    count.textContent=list.length+' جمله';
-    empty.classList.toggle('hidden', list.length>0);
-    if(mode==='fav') title.textContent='علاقه‌مندی‌ها';
-    else if(search.value) title.textContent='نتایج جست‌وجو';
-    else if(cat==='all') title.textContent='همه جمله‌ها';
-    else {
-      const c=categories.find(x=>String(x.id)===String(cat));
-      title.textContent=c ? (c.title_fa||c.title_en) : 'جمله‌ها';
+      list.forEach(s=>{
+        const a=document.createElement('article'); a.className='card';
+        const p=document.createElement('div'); p.className='phrase';
+        const en=document.createElement('div'); en.className='en'; en.textContent=s.english;
+        const fa=document.createElement('div'); fa.className='fa'; fa.textContent=s.persian;
+        p.append(en,fa);
+        const acts=document.createElement('div'); acts.className='actions';
+        const play=document.createElement('button'); play.className='play'; play.textContent='▶'; play.onclick=()=>speak(s.english,play);
+        const fav=document.createElement('button'); const key='d-'+s.id; fav.className='fav'+(favs[key]?' on':''); fav.textContent=favs[key]?'♥':'♡';
+        fav.onclick=()=>{if(favs[key]) delete favs[key]; else favs[key]=1;localStorage.setItem('kalamat.favs',JSON.stringify(favs));render();};
+        const cp=document.createElement('button'); cp.className='copy'; cp.textContent='⧉'; cp.onclick=()=>copyText(s.english+'\n'+s.persian);
+        acts.append(play,fav,cp); a.append(p,acts); cards.appendChild(a);
+      });
+    } else {
+      list=collocations.filter(c=>{
+        if(mode==='fav' && !favs['c-'+c.id]) return false;
+        if(mode==='all' && cat!=='all' && String(c.category_id)!==String(cat)) return false;
+        if(q && !norm(c.phrase+' '+c.meaning_fa+' '+c.example_en+' '+c.example_fa).includes(q)) return false;
+        return true;
+      });
+      list.forEach(c=>{
+        const a=document.createElement('article'); a.className='card colloc-card';
+        const p=document.createElement('div'); p.className='phrase';
+        const ph=document.createElement('div'); ph.className='phrase-main'; ph.textContent=c.phrase;
+        const me=document.createElement('div'); me.className='meaning'; me.textContent=c.meaning_fa;
+        const ex=document.createElement('div'); ex.className='example'; ex.textContent=c.example_en;
+        const exfa=document.createElement('div'); exfa.className='example-fa'; exfa.textContent=c.example_fa;
+        const badges=document.createElement('div'); badges.className='badges';
+        if(c.level){const b=document.createElement('span');b.className='badge';b.textContent=c.level;badges.appendChild(b)}
+        if(c.pattern){const b=document.createElement('span');b.className='badge';b.textContent=c.pattern;badges.appendChild(b)}
+        p.append(ph,me,ex,exfa,badges);
+        const acts=document.createElement('div'); acts.className='actions';
+        const play=document.createElement('button'); play.className='play'; play.textContent='▶'; play.onclick=()=>speak(c.phrase,play);
+        const fav=document.createElement('button'); const key='c-'+c.id; fav.className='fav'+(favs[key]?' on':''); fav.textContent=favs[key]?'♥':'♡';
+        fav.onclick=()=>{if(favs[key]) delete favs[key]; else favs[key]=1;localStorage.setItem('kalamat.favs',JSON.stringify(favs));render();};
+        const cp=document.createElement('button'); cp.className='copy'; cp.textContent='⧉'; cp.onclick=()=>copyText(c.phrase+' — '+c.meaning_fa+'\n'+c.example_en+'\n'+c.example_fa);
+        acts.append(play,fav,cp); a.append(p,acts); cards.appendChild(a);
+      });
     }
+    count.textContent=list.length+(module==='daily'?' جمله':' کالوکیشن');
+    empty.classList.toggle('hidden', list.length>0);
+    if(mode==='fav') title.textContent=module==='daily'?'علاقه‌مندی‌های مکالمه':'علاقه‌مندی‌های کالوکیشن';
+    else if(search.value) title.textContent='نتایج جست‌وجو';
+    else if(cat==='all') title.textContent=module==='daily'?'همه جمله‌ها':'همه کالوکیشن‌ها';
+    else {
+      const source=module==='daily'?categories:collocCategories;
+      const c=source.find(x=>String(x.id)===String(cat));
+      title.textContent=c ? (c.title_fa||c.title_en) : 'موارد';
+    }
+  }
+  async function copyText(text){
+    try{await navigator.clipboard.writeText(text);toast('کپی شد');}catch(e){toast('کپی انجام نشد');}
   }
   function speak(text,btn) {
     if(!('speechSynthesis' in window)){toast('پخش صدا در این مرورگر فعال نیست');return;}
@@ -297,7 +340,7 @@ button,input{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:tra
   checkAccessAndLoad();
 
   if('serviceWorker' in navigator) {
-    window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js?v=5'));
+    window.addEventListener('load',()=>navigator.serviceWorker.register('service-worker.js?v=6'));
   }
 })();
 </script>
