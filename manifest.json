@@ -3,8 +3,8 @@
   "short_name": "Kalamat",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f6f3fb",
-  "theme_color": "#51418b",
+  "background_color": "#EAF9FB",
+"theme_color": "#39B8C8",
   "lang": "fa",
   "dir": "rtl",
   "icons": [
